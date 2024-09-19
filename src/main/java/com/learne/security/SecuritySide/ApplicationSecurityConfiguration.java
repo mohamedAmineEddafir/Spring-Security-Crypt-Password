@@ -9,6 +9,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import static com.learne.security.SecuritySide.ApplicationUserRole.ADMIN;
+import static com.learne.security.SecuritySide.ApplicationUserRole.STUDENT;
 import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,11 +41,21 @@ public class ApplicationSecurityConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.builder()
+        UserDetails user =
+                User.builder()
                         .username("Amine")
                         .password(passwordEncoder.encode("123"))
-                        .roles("Student")
+                        .roles(STUDENT.name())
                         .build();
-        return new InMemoryUserDetailsManager(user);
+        UserDetails admin =
+                User.builder()
+                        .username("youssef")
+                        .password(passwordEncoder.encode("456"))
+                        .roles(ADMIN.name())
+                        .build();
+        return new InMemoryUserDetailsManager(
+                user,
+                admin
+        );
     }
 }
