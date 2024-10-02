@@ -10,8 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import static com.learne.security.SecuritySide.ApplicationUserRole.ADMIN;
-import static com.learne.security.SecuritySide.ApplicationUserRole.STUDENT;
+import static com.learne.security.SecuritySide.ApplicationUserRole.*;
 import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,9 +29,11 @@ public class ApplicationSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests( authorizeRequests ->
+                .csrf().disable()
+                .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/","index.html","/css/*","/js/*").permitAll()
+                                .requestMatchers("/", "index.html", "/css/*", "/js/*").permitAll()
+                                .requestMatchers("/api/**").hasRole(STUDENT.name())
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults());
@@ -43,7 +44,7 @@ public class ApplicationSecurityConfiguration {
     public UserDetailsService userDetailsService() {
         UserDetails user =
                 User.builder()
-                        .username("Amine")
+                        .username("fati")
                         .password(passwordEncoder.encode("123"))
                         .roles(STUDENT.name())
                         .build();
@@ -53,9 +54,16 @@ public class ApplicationSecurityConfiguration {
                         .password(passwordEncoder.encode("456"))
                         .roles(ADMIN.name())
                         .build();
+        UserDetails adminAmine =
+                User.builder()
+                        .username("Amine")
+                        .password(passwordEncoder.encode("1212"))
+                        .roles(ADMIN_TRAINING.name())
+                        .build();
         return new InMemoryUserDetailsManager(
                 user,
-                admin
+                admin,
+                adminAmine
         );
     }
 }

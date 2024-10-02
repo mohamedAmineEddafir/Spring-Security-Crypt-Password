@@ -18,4 +18,12 @@ public class Student {
     public String getStudentName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
