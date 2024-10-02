@@ -2,6 +2,7 @@ package com.learne.security.SecuritySide;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,14 +30,14 @@ public class ApplicationSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/", "index.html", "/css/*", "/js/*").permitAll()
                                 .requestMatchers("/api/**").hasRole(STUDENT.name())
                                 .anyRequest().authenticated()
-                )
-                .httpBasic(withDefaults());
+                );
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.httpBasic(withDefaults());
         return http.build();
     }
 
